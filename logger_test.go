@@ -309,6 +309,20 @@ func TestFatal(t *testing.T) {
 	}
 }
 
+func TestFixedSizeLevel(t *testing.T) {
+	buffer := bytes.NewBuffer([]byte{})
+	logger := NewLogger().SetOutput(buffer).SetFlags( Flevel | FfixedSizeLevel)
+	expected := fmt.Sprintf("[%-8s] %s", levels[INFO], logMessage)
+	logger.Info(logMessage)
+	output, err := ioutil.ReadAll(buffer)
+	if err != nil {
+		t.Errorf("Unable to read logger output : %s", err)
+	}
+	if string(output) != expected {
+		t.Errorf("Invalid log message \"%s\" instead of \"%s\"", string(output), expected)
+	}
+}
+
 func TestMinLevel(t *testing.T) {
 	buffer := bytes.NewBuffer([]byte{})
 	logger := NewLogger().SetOutput(buffer).SetMinLevel(FATAL)
