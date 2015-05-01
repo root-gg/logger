@@ -26,7 +26,7 @@ var levels = []string{"DEBUG", "INFO", "WARNING", "CRITICAL", "FATAL"}
 
 const (
 	Fdate = 1 << iota
-	Flevel
+	Flevel ; FfixedSizeLevel
 	FshortFile
 	FlongFile
 	FshortFunction
@@ -193,7 +193,11 @@ func (logger *Logger) Log(level Level, message string) {
 			str.WriteString(fmt.Sprintf("[%s]", time.Now().Format(logger.DateFormat)))
 		}
 		if logger.Flags&Flevel != 0 {
-			str.WriteString(fmt.Sprintf("[%s]", levels[level]))
+			if logger.Flags&FfixedSizeLevel != 0 {
+				str.WriteString(fmt.Sprintf("[%-8s]", levels[level]))
+			} else {
+				str.WriteString(fmt.Sprintf("[%s]", levels[level]))
+			}
 		}
 		if logger.Flags&(FshortFile|FlongFile|FshortFunction|FlongFunction) != 0 {
 			file, line, function := utils.GetCaller(logger.CallDepth)
